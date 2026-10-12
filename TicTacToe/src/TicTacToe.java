@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import javax.swing.*;
 
 public class TicTacToe {
@@ -8,7 +9,7 @@ public class TicTacToe {
     JFrame frame = new JFrame("Tic-Tac-Toe");
     JLabel textLabel = new JLabel();
     JPanel textPanel = new JPanel();
-    JPanel boardPanel = new JPanel();
+    JPanel boardPanel;
 
     JButton[][] board = new JButton[3][3];
     String playerX = "X";
@@ -17,6 +18,7 @@ public class TicTacToe {
 
     boolean gameOver = false;
     int turns = 0;
+    int winStartRow, winStartCol, winEndRow, winEndCol;
 
     Color customDarkGray = new Color(30, 30, 46);
     Color customRed = new Color(243, 160, 168);
@@ -43,6 +45,45 @@ public class TicTacToe {
         textPanel.add(textLabel);
         frame.add(textPanel, BorderLayout.NORTH);
 
+        boardPanel = new JPanel() {
+            @Override
+            protected void paintChildren(Graphics g) {
+                super.paintChildren(g);
+                
+                if (gameOver) {
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2d.setColor(customRed);
+                    g2d.setStroke(new BasicStroke(12, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+                    int width = getWidth();
+                    int height = getHeight();
+                    int cellW = width / 3;
+                    int cellH = height / 3;
+
+                    int x1 = winStartCol * cellW + cellW / 2;
+                    int y1 = winStartRow * cellH + cellH / 2;
+                    int x2 = winEndCol * cellW + cellW / 2;
+                    int y2 = winEndRow * cellH + cellH / 2;
+
+                    double extension = 60.0; 
+
+                    double dx = x2 - x1;
+                    double dy = y2 - y1;
+                    double length = Math.sqrt(dx * dx + dy * dy);
+                    double ux = dx / length;
+                    double uy = dy / length;
+
+                    x1 -= ux * extension;
+                    y1 -= uy * extension;
+                    x2 += ux * extension;
+                    y2 += uy * extension;
+
+                    g2d.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
+                }
+            }
+        };
+
         boardPanel.setLayout(new GridLayout(3,3));
         boardPanel.setBackground(customDarkGray);
         frame.add(boardPanel);
@@ -50,7 +91,16 @@ public class TicTacToe {
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
-                JButton tile = new JButton ();
+                JButton tile = new JButton (){
+                    @Override
+                    protected void processMouseEvent(MouseEvent e) {
+                        if (!gameOver) super.processMouseEvent(e);
+                    }
+                    @Override
+                    protected void processMouseMotionEvent(MouseEvent e) {
+                        if (!gameOver) super.processMouseMotionEvent(e);
+                    }
+                };
                 board[row][column] = tile;
                 boardPanel.add(tile);
 
@@ -87,17 +137,20 @@ public class TicTacToe {
         };
 
         for (int[] condition : winConditions) {
-            JButton firstSpace = board[condition[0] % 3][condition[0] / 3];
-            JButton secondSpace = board[condition[1] % 3][condition[1] / 3];
-            JButton thirdSpace = board[condition[2] % 3][condition[2] / 3];
+
+            JButton firstSpace = board[condition[0] / 3][condition[0] % 3];
+            JButton secondSpace = board[condition[1] / 3][condition[1] % 3];
+            JButton thirdSpace = board[condition[2] / 3][condition[2] % 3];
             
             if (firstSpace.getText().equals("")) continue;
             
             if (firstSpace.getText().equals(secondSpace.getText())
                 && secondSpace.getText().equals(thirdSpace.getText())) {
-                
+                    
+                setWinningLine(condition[0] / 3, condition[0] % 3, condition[2] / 3, condition[2] % 3);
                 setWinner(firstSpace, secondSpace, thirdSpace);
                 gameOver = true;
+                boardPanel.repaint();
                 return;
             }
         }
@@ -107,6 +160,13 @@ public class TicTacToe {
             gameOver = true;
         }
 
+    }
+
+    void setWinningLine(int r1, int c1, int r2, int c2) {
+        winStartRow = r1;
+        winStartCol = c1;
+        winEndRow = r2;
+        winEndCol = c2;
     }
 
     void setWinner(JButton space1, JButton space2, JButton space3) {
