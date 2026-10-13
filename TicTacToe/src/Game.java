@@ -20,7 +20,6 @@ public class Game {
     JLabel xScoreLabel = new JLabel("X: 0", JLabel.LEFT);
     JLabel tieScoreLabel = new JLabel("Ties: 0", JLabel.CENTER);
     JLabel oScoreLabel = new JLabel("O: 0", JLabel.RIGHT);
-    Font scoreFont = new Font("Arial", Font.BOLD, 25);
     
     String playerX = "X";
     String playerO = "O";
@@ -34,14 +33,6 @@ public class Game {
     int turns = 0;
     int winStartRow, winStartCol, winEndRow, winEndCol;
 
-    Color customDarkGray = new Color(30, 30, 46);
-    Color customGray = new Color(69, 71, 90);
-    Color customRed = new Color(243, 160, 168);
-    Color customGreen = new Color(166, 227, 161);
-    Color customOrange = new Color(250, 179, 135);
-    Color textColor = new Color(205, 214, 244);
-    Color subTextColor = new Color(166, 173, 200);
-
     Game() {
         frame.setVisible(true);
         frame.setSize(windowWidth, WindowHeight);
@@ -51,10 +42,10 @@ public class Game {
         frame.setLayout(new BorderLayout());
 
         topContainer.setLayout(new BorderLayout());
-        topContainer.setBackground(customDarkGray);
+        topContainer.setBackground(Theme.CUSTOM_DARK_GRAY);
 
-        textLabel.setBackground(customDarkGray);
-        textLabel.setForeground(textColor);
+        textLabel.setBackground(Theme.CUSTOM_DARK_GRAY);
+        textLabel.setForeground(Theme.TEXT_COLOR);
         textLabel.setFont(new Font("Arial", Font.BOLD,60));
         textLabel.setHorizontalAlignment(JLabel.CENTER);
         textLabel.setText("Tic-Tac-Toe");
@@ -63,17 +54,17 @@ public class Game {
         topContainer.add(textLabel, BorderLayout.NORTH);
 
         scorePanel.setLayout(new GridLayout(1, 3));
-        scorePanel.setBackground(customDarkGray);
+        scorePanel.setBackground(Theme.CUSTOM_DARK_GRAY);
         scorePanel.setBorder(BorderFactory.createEmptyBorder(0, 25, 12, 25));
         
-        xScoreLabel.setForeground(subTextColor);
-        xScoreLabel.setFont(scoreFont);
+        xScoreLabel.setForeground(Theme.SUB_TEXT_COLOR);
+        xScoreLabel.setFont(Theme.SCORE_FONT);
 
-        tieScoreLabel.setForeground(subTextColor);
-        tieScoreLabel.setFont(scoreFont);
+        tieScoreLabel.setForeground(Theme.SUB_TEXT_COLOR);
+        tieScoreLabel.setFont(Theme.SCORE_FONT);
         
-        oScoreLabel.setForeground(subTextColor);
-        oScoreLabel.setFont(scoreFont);
+        oScoreLabel.setForeground(Theme.SUB_TEXT_COLOR);
+        oScoreLabel.setFont(Theme.SCORE_FONT);
 
         scorePanel.add(xScoreLabel);
         scorePanel.add(tieScoreLabel);
@@ -90,7 +81,7 @@ public class Game {
                 if (gameOver) {
                     Graphics2D g2d = (Graphics2D) g;
                     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2d.setColor(customRed);
+                    g2d.setColor(Theme.CUSTOM_RED);
                     g2d.setStroke(new BasicStroke(12, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
                     int width = getWidth();
@@ -122,7 +113,7 @@ public class Game {
         };
 
         boardPanel.setLayout(new GridLayout(3,3, 2, 2));
-        boardPanel.setBackground(customDarkGray);
+        boardPanel.setBackground(Theme.CUSTOM_DARK_GRAY);
         boardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         frame.add(boardPanel, BorderLayout.CENTER);
 
@@ -142,8 +133,8 @@ public class Game {
                 board[row][column] = tile;
                 boardPanel.add(tile);
 
-                tile.setBackground(customDarkGray);
-                tile.setForeground(textColor);
+                tile.setBackground(Theme.CUSTOM_DARK_GRAY);
+                tile.setForeground(Theme.TEXT_COLOR);
                 tile.setFont(new Font("Arial", Font.BOLD, 120));
                 tile.setFocusable(false);
 
@@ -167,21 +158,21 @@ public class Game {
         }
 
         
-        controlPanel.setBackground(customDarkGray);
+        controlPanel.setBackground(Theme.CUSTOM_DARK_GRAY);
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
 
-        restartButton.setFont(new Font("Arial", Font.BOLD, 30));
+        restartButton.setFont(Theme.BUTTON_FONT);
         restartButton.setFocusable(false);
-        restartButton.setBackground(customGray);
-        restartButton.setForeground(textColor);
+        restartButton.setBackground(Theme.CUSTOM_GRAY);
+        restartButton.setForeground(Theme.TEXT_COLOR);
         restartButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         restartButton.addActionListener(e -> resetGame());
 
-        resetScoreButton.setFont(new Font("Arial", Font.BOLD, 30));
+        resetScoreButton.setFont(Theme.BUTTON_FONT);
         resetScoreButton.setFocusable(false);
-        resetScoreButton.setBackground(customRed);
-        resetScoreButton.setForeground(customDarkGray);
+        resetScoreButton.setBackground(Theme.CUSTOM_RED);
+        resetScoreButton.setForeground(Theme.CUSTOM_DARK_GRAY);
         resetScoreButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         resetScoreButton.addActionListener(e -> resetScores());
 
@@ -215,7 +206,7 @@ public class Game {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
                 board[row][column].setText("");
-                board[row][column].setForeground(textColor);
+                board[row][column].setForeground(Theme.TEXT_COLOR);
             }
         }
         boardPanel.repaint();
@@ -262,9 +253,9 @@ public class Game {
     }
 
     void setWinner(JButton space1, JButton space2, JButton space3) {
-        space1.setForeground(customGreen);
-        space2.setForeground(customGreen);
-        space3.setForeground(customGreen);
+        space1.setForeground(Theme.CUSTOM_GREEN);
+        space2.setForeground(Theme.CUSTOM_GREEN);
+        space3.setForeground(Theme.CUSTOM_GREEN);
         
         textLabel.setText(currentPlayer + " is the winner!");
         if (currentPlayer.equals(playerX)) {
@@ -278,7 +269,7 @@ public class Game {
     void setTie() {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
-                board[row][column].setForeground(customOrange);
+                board[row][column].setForeground(Theme.CUSTOM_ORANGE);
             }
         }
         textLabel.setText("It's a Tie!");
