@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 
-public class TicTacToe {
+public class Game {
     int windowWidth = 600;
     int WindowHeight= 710;
     
@@ -30,7 +30,7 @@ public class TicTacToe {
     Color customOrange = new Color(250, 179, 135);
     Color textColor = new Color(205, 214, 244);
 
-    TicTacToe() {
+    Game() {
         frame.setVisible(true);
         frame.setSize(windowWidth, WindowHeight);
         frame.setLocationRelativeTo(null);
