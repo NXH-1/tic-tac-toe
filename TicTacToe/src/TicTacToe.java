@@ -4,16 +4,16 @@ import javax.swing.*;
 
 public class TicTacToe {
     int windowWidth = 600;
-    int WindowHeight= 700;
+    int WindowHeight= 710;
     
     JFrame frame = new JFrame("Tic-Tac-Toe");
     JLabel textLabel = new JLabel();
     JPanel textPanel = new JPanel();
     JPanel boardPanel;
-    // JPanel controlPanel = new JPanel();
+    JPanel controlPanel = new JPanel();
 
     JButton[][] board = new JButton[3][3];
-    // JButton restartButton = new JButton("Restart");
+    JButton restartButton = new JButton("Restart");
     
     String playerX = "X";
     String playerO = "O";
@@ -40,7 +40,7 @@ public class TicTacToe {
 
         textLabel.setBackground(customDarkGray);
         textLabel.setForeground(textColor);
-        textLabel.setFont(new Font("Arial", Font.BOLD,50));
+        textLabel.setFont(new Font("Arial", Font.BOLD,60));
         textLabel.setHorizontalAlignment(JLabel.CENTER);
         textLabel.setText("Tic-Tac-Toe");
         textLabel.setOpaque(true);
@@ -131,6 +131,21 @@ public class TicTacToe {
                 });
             }
         }
+
+        // Bottom Control Panel with Restart Button
+        controlPanel.setBackground(customDarkGray);
+        controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        
+        restartButton.setFont(new Font("Arial", Font.BOLD, 40));
+        restartButton.setFocusable(false);
+        restartButton.setBackground(customGray);
+        restartButton.setForeground(textColor);
+        restartButton.addActionListener(e -> resetGame());
+        
+        controlPanel.add(restartButton);
+        frame.add(controlPanel, BorderLayout.SOUTH);
+
+
 
     }
 
