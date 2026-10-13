@@ -10,8 +10,11 @@ public class TicTacToe {
     JLabel textLabel = new JLabel();
     JPanel textPanel = new JPanel();
     JPanel boardPanel;
+    // JPanel controlPanel = new JPanel();
 
     JButton[][] board = new JButton[3][3];
+    // JButton restartButton = new JButton("Restart");
+    
     String playerX = "X";
     String playerO = "O";
     String currentPlayer = playerX;
@@ -21,6 +24,7 @@ public class TicTacToe {
     int winStartRow, winStartCol, winEndRow, winEndCol;
 
     Color customDarkGray = new Color(30, 30, 46);
+    Color customGray = new Color(69, 71, 90);
     Color customRed = new Color(243, 160, 168);
     Color customGreen = new Color(166, 227, 161);
     Color customOrange = new Color(250, 179, 135);
@@ -127,6 +131,22 @@ public class TicTacToe {
                 });
             }
         }
+
+    }
+
+    void resetGame() {
+        gameOver = false;
+        turns = 0;
+        currentPlayer = playerX;
+        textLabel.setText("Tic-Tac-Toe");
+
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 3; column++) {
+                board[row][column].setText("");
+                board[row][column].setForeground(textColor);
+            }
+        }
+        boardPanel.repaint();
     }
 
     void checkWinner() {
