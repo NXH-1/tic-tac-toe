@@ -3,21 +3,32 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 
 public class Game {
-    int windowWidth = 600;
-    int WindowHeight= 710;
+    int windowWidth = 620;
+    int WindowHeight= 860;
     
     JFrame frame = new JFrame("Tic-Tac-Toe");
     JLabel textLabel = new JLabel();
-    JPanel textPanel = new JPanel();
+    JPanel topContainer = new JPanel();
+    JPanel scorePanel = new JPanel();
     JPanel boardPanel;
     JPanel controlPanel = new JPanel();
 
     JButton[][] board = new JButton[3][3];
     JButton restartButton = new JButton("Restart");
+    JButton resetScoreButton = new JButton("Reset Score");
+
+    JLabel xScoreLabel = new JLabel("X: 0", JLabel.LEFT);
+    JLabel tieScoreLabel = new JLabel("Ties: 0", JLabel.CENTER);
+    JLabel oScoreLabel = new JLabel("O: 0", JLabel.RIGHT);
+    Font scoreFont = new Font("Arial", Font.BOLD, 25);
     
     String playerX = "X";
     String playerO = "O";
     String currentPlayer = playerX;
+
+    int scoreX = 0;
+    int scoreO = 0;
+    int ties = 0;
 
     boolean gameOver = false;
     int turns = 0;
@@ -29,6 +40,7 @@ public class Game {
     Color customGreen = new Color(166, 227, 161);
     Color customOrange = new Color(250, 179, 135);
     Color textColor = new Color(205, 214, 244);
+    Color subTextColor = new Color(166, 173, 200);
 
     Game() {
         frame.setVisible(true);
@@ -38,16 +50,37 @@ public class Game {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
+        topContainer.setLayout(new BorderLayout());
+        topContainer.setBackground(customDarkGray);
+
         textLabel.setBackground(customDarkGray);
         textLabel.setForeground(textColor);
         textLabel.setFont(new Font("Arial", Font.BOLD,60));
         textLabel.setHorizontalAlignment(JLabel.CENTER);
         textLabel.setText("Tic-Tac-Toe");
         textLabel.setOpaque(true);
+        textLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
+        topContainer.add(textLabel, BorderLayout.NORTH);
 
-        textPanel.setLayout(new BorderLayout());
-        textPanel.add(textLabel);
-        frame.add(textPanel, BorderLayout.NORTH);
+        scorePanel.setLayout(new GridLayout(1, 3));
+        scorePanel.setBackground(customDarkGray);
+        scorePanel.setBorder(BorderFactory.createEmptyBorder(0, 25, 12, 25));
+        
+        xScoreLabel.setForeground(subTextColor);
+        xScoreLabel.setFont(scoreFont);
+
+        tieScoreLabel.setForeground(subTextColor);
+        tieScoreLabel.setFont(scoreFont);
+        
+        oScoreLabel.setForeground(subTextColor);
+        oScoreLabel.setFont(scoreFont);
+
+        scorePanel.add(xScoreLabel);
+        scorePanel.add(tieScoreLabel);
+        scorePanel.add(oScoreLabel);
+
+        topContainer.add(scorePanel, BorderLayout.SOUTH);
+        frame.add(topContainer, BorderLayout.NORTH);
 
         boardPanel = new JPanel() {
             @Override
@@ -88,9 +121,10 @@ public class Game {
             }
         };
 
-        boardPanel.setLayout(new GridLayout(3,3));
+        boardPanel.setLayout(new GridLayout(3,3, 2, 2));
         boardPanel.setBackground(customDarkGray);
-        frame.add(boardPanel);
+        boardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        frame.add(boardPanel, BorderLayout.CENTER);
 
 
         for (int row = 0; row < 3; row++) {
@@ -132,19 +166,44 @@ public class Game {
             }
         }
 
-        // Bottom Control Panel with Restart Button
-        controlPanel.setBackground(customDarkGray);
-        controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         
-        restartButton.setFont(new Font("Arial", Font.BOLD, 40));
+        controlPanel.setBackground(customDarkGray);
+        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
+
+        restartButton.setFont(new Font("Arial", Font.BOLD, 30));
         restartButton.setFocusable(false);
         restartButton.setBackground(customGray);
         restartButton.setForeground(textColor);
+        restartButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         restartButton.addActionListener(e -> resetGame());
-        
+
+        resetScoreButton.setFont(new Font("Arial", Font.BOLD, 30));
+        resetScoreButton.setFocusable(false);
+        resetScoreButton.setBackground(customRed);
+        resetScoreButton.setForeground(customDarkGray);
+        resetScoreButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        resetScoreButton.addActionListener(e -> resetScores());
+
         controlPanel.add(restartButton);
+        controlPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        controlPanel.add(resetScoreButton);
+
         frame.add(controlPanel, BorderLayout.SOUTH);
 
+    }
+
+    void resetScores() {
+        scoreX = 0;
+        scoreO = 0;
+        ties = 0;
+        updateScoreText();
+    }
+
+    void updateScoreText() {
+        xScoreLabel.setText("X: " + scoreX);
+        tieScoreLabel.setText("Ties: " + ties);
+        oScoreLabel.setText("O: " + scoreO);
     }
 
     void resetGame() {
@@ -208,6 +267,12 @@ public class Game {
         space3.setForeground(customGreen);
         
         textLabel.setText(currentPlayer + " is the winner!");
+        if (currentPlayer.equals(playerX)) {
+            scoreX++;
+        } else {
+            scoreO++;
+        }
+        updateScoreText();
     }
 
     void setTie() {
@@ -217,9 +282,10 @@ public class Game {
             }
         }
         textLabel.setText("It's a Tie!");
+
+        ties++;
+        updateScoreText();
     }
 }
 
-// Todo: add restart function
-// Todo: add a scorring system between players
 // Todo: add a main menu that you can pick between cpu or a another player
