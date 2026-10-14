@@ -9,7 +9,7 @@ public class App extends JFrame{
 
     public App() {
         setTitle("Tic-Tac-Toe");
-        setSize(620, 900);
+        setSize(620, 920);
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
