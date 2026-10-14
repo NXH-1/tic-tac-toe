@@ -2,11 +2,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 
-public class Game {
-    int windowWidth = 620;
-    int WindowHeight= 860;
+public class Game extends JPanel {
+    boolean vsCpuMode;
+    private Runnable BackToMenu;
     
-    JFrame frame = new JFrame("Tic-Tac-Toe");
     JLabel textLabel = new JLabel();
     JPanel topContainer = new JPanel();
     JPanel scorePanel = new JPanel();
@@ -16,6 +15,7 @@ public class Game {
     JButton[][] board = new JButton[3][3];
     JButton restartButton = new JButton("Restart");
     JButton resetScoreButton = new JButton("Reset Score");
+    JButton backButton = new JButton("← Back");
 
     JLabel xScoreLabel = new JLabel("X: 0", JLabel.LEFT);
     JLabel tieScoreLabel = new JLabel("Ties: 0", JLabel.CENTER);
@@ -33,20 +33,19 @@ public class Game {
     int turns = 0;
     int winStartRow, winStartCol, winEndRow, winEndCol;
 
-    Game() {
-        frame.setVisible(true);
-        frame.setSize(windowWidth, WindowHeight);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
+    Game(boolean vsCpu, Runnable BackToMenu) {
+        this.vsCpuMode = vsCpu;
+        this.BackToMenu = BackToMenu;
+
+        setLayout(new BorderLayout());
+        setBackground(Theme.CUSTOM_DARK_GRAY);
 
         topContainer.setLayout(new BorderLayout());
         topContainer.setBackground(Theme.CUSTOM_DARK_GRAY);
 
         textLabel.setBackground(Theme.CUSTOM_DARK_GRAY);
         textLabel.setForeground(Theme.TEXT_COLOR);
-        textLabel.setFont(new Font("Arial", Font.BOLD,60));
+        textLabel.setFont(new Font("Arial", Font.BOLD,50));
         textLabel.setHorizontalAlignment(JLabel.CENTER);
         textLabel.setText("Tic-Tac-Toe");
         textLabel.setOpaque(true);
@@ -71,7 +70,7 @@ public class Game {
         scorePanel.add(oScoreLabel);
 
         topContainer.add(scorePanel, BorderLayout.SOUTH);
-        frame.add(topContainer, BorderLayout.NORTH);
+        add(topContainer, BorderLayout.NORTH);
 
         boardPanel = new JPanel() {
             @Override
@@ -115,7 +114,7 @@ public class Game {
         boardPanel.setLayout(new GridLayout(3,3, 2, 2));
         boardPanel.setBackground(Theme.CUSTOM_DARK_GRAY);
         boardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        frame.add(boardPanel, BorderLayout.CENTER);
+        add(boardPanel, BorderLayout.CENTER);
 
 
         for (int row = 0; row < 3; row++) {
@@ -176,11 +175,22 @@ public class Game {
         resetScoreButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         resetScoreButton.addActionListener(e -> resetScores());
 
+        backButton.setFont(Theme.BUTTON_FONT);
+        backButton.setFocusable(false);
+        backButton.setBackground(Theme.CUSTOM_RED);
+        backButton.setForeground(Theme.TEXT_COLOR);
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 1), 
+                                                                BorderFactory.createEmptyBorder(2, 20, 2, 20)));
+        backButton.addActionListener(e -> BackToMenu.run());
+
         controlPanel.add(restartButton);
         controlPanel.add(Box.createRigidArea(new Dimension(0, 8)));
         controlPanel.add(resetScoreButton);
+        controlPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        controlPanel.add(backButton);
 
-        frame.add(controlPanel, BorderLayout.SOUTH);
+        add(controlPanel, BorderLayout.SOUTH);
 
     }
 
@@ -280,3 +290,4 @@ public class Game {
 }
 
 // Todo: add a main menu that you can pick between cpu or a another player
+// Todo: create computer player
