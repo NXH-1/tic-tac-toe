@@ -1,0 +1,17 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class MainMenu extends JFrame {
+    int windowWidth = 620;
+    int WindowHeight= 860;
+
+    public MainMenu() {
+        setTitle("Tic-Tac-Toe - Menu");
+        setSize(windowWidth, windowHeight);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setBackground(Theme.CUSTOM_DARK_GRAY);
+        setLayout(new GridBagLayout());
+    }
+}
