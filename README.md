@@ -4,8 +4,7 @@ Tic Tac toe made in java. A project I have done in python but it was very bare b
 
 This project features different difficulty of CPU to face against, as well as playing against your friend. The game also keep tracks of scoring of each side. You are also allow to switch side when facing against the CPU. When a game is complete simply click restart to start a new game or you can reset your score as well.
 
-To run:
-Simply run the App.java file
+To launch the application, run the App.java file
 
 The color pallete used: https://catppuccin.com/palette/
 
