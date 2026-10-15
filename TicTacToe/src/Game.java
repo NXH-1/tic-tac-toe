@@ -16,6 +16,8 @@ public class Game extends JPanel {
     JButton restartButton = new JButton("Restart");
     JButton resetScoreButton = new JButton("Reset Score");
     JButton backButton = new JButton("← Back");
+    JComboBox<String> difficultyDropdown;
+    JButton switchSideButton;
 
     JLabel xScoreLabel = new JLabel("X: 0", JLabel.LEFT);
     JLabel tieScoreLabel = new JLabel("Ties: 0", JLabel.CENTER);
@@ -24,6 +26,9 @@ public class Game extends JPanel {
     String playerX = "X";
     String playerO = "O";
     String currentPlayer = playerX;
+
+    // For CPU Mode
+    String cpuPlayer = playerO;
 
     int scoreX = 0;
     int scoreO = 0;
@@ -47,7 +52,7 @@ public class Game extends JPanel {
         textLabel.setForeground(Theme.TEXT_COLOR);
         textLabel.setFont(new Font("Arial", Font.BOLD,50));
         textLabel.setHorizontalAlignment(JLabel.CENTER);
-        textLabel.setText("Tic-Tac-Toe");
+        textLabel.setText("Vs a Friend"); 
         textLabel.setOpaque(true);
         textLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
         topContainer.add(textLabel, BorderLayout.NORTH);
@@ -150,6 +155,15 @@ public class Game extends JPanel {
                         if (!gameOver) {
                             currentPlayer = currentPlayer.equals(playerX) ? playerO : playerX;
                             textLabel.setText(currentPlayer + "'s turn.");
+
+                            if (vsCpuMode && currentPlayer.equals(cpuPlayer)) {
+                                Timer cpuTimer = new Timer(300, event -> {
+                                    makeCpuMove();
+                                    ((Timer)event.getSource()).stop();
+                                });
+                                cpuTimer.setRepeats(false);
+                                cpuTimer.start();
+                            }
                         }
                     }
                 });
@@ -158,8 +172,12 @@ public class Game extends JPanel {
 
         
         controlPanel.setBackground(Theme.CUSTOM_DARK_GRAY);
-        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
+        controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
+
+        JPanel leftActions = new JPanel();
+        leftActions.setLayout(new BoxLayout(leftActions, BoxLayout.Y_AXIS));
+        leftActions.setBackground(Theme.CUSTOM_DARK_GRAY);
 
         restartButton.setFont(Theme.BUTTON_FONT);
         restartButton.setFocusable(false);
@@ -178,19 +196,58 @@ public class Game extends JPanel {
         backButton.setFont(Theme.BUTTON_FONT);
         backButton.setFocusable(false);
         backButton.setBackground(Theme.CUSTOM_RED);
-        backButton.setForeground(Theme.TEXT_COLOR);
+        backButton.setForeground(Color.WHITE);
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 1), 
                                                                 BorderFactory.createEmptyBorder(2, 20, 2, 20)));
         backButton.addActionListener(e -> BackToMenu.run());
 
-        controlPanel.add(restartButton);
-        controlPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        controlPanel.add(resetScoreButton);
-        controlPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        controlPanel.add(backButton);
+        leftActions.add(restartButton);
+        leftActions.add(Box.createRigidArea(new Dimension(10, 8)));
+        leftActions.add(resetScoreButton);
+        leftActions.add(Box.createRigidArea(new Dimension(10, 8)));
+        leftActions.add(backButton);
+        controlPanel.add(leftActions);
+
+        if (vsCpuMode) {
+            restartButton.setAlignmentX(LEFT_ALIGNMENT);
+            resetScoreButton.setAlignmentX(LEFT_ALIGNMENT);
+            backButton.setAlignmentX(LEFT_ALIGNMENT);
+
+            JPanel rightActions = new JPanel();
+            rightActions.setLayout(new BoxLayout(rightActions, BoxLayout.Y_AXIS));
+            rightActions.setBackground(Theme.CUSTOM_DARK_GRAY);
+            
+
+            textLabel.setText("Vs a CPU");
+
+            String[] difficulties = {"Normal", "Hard", "Unbeatable"};
+            difficultyDropdown = new JComboBox<>(difficulties);
+            difficultyDropdown.setFont(Theme.BUTTON_FONT);
+            difficultyDropdown.setBackground(Theme.CUSTOM_DARK_GRAY);
+            difficultyDropdown.setForeground(Theme.TEXT_COLOR);
+            difficultyDropdown.setFocusable(false);
+            difficultyDropdown.setMaximumSize(new Dimension(250, 60));
+
+            switchSideButton = new JButton("Switch to O");
+            switchSideButton.setFont(Theme.BUTTON_FONT);
+            switchSideButton.setFocusable(false);
+            switchSideButton.setBackground(Theme.CUSTOM_GRAY);
+            switchSideButton.setForeground(Theme.TEXT_COLOR);
+            switchSideButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            switchSideButton.addActionListener(e -> toggleSide());
+
+            rightActions.add(difficultyDropdown);
+            rightActions.add(Box.createRigidArea(new Dimension(0, 8)));
+            rightActions.add(switchSideButton);
+            rightActions.add(Box.createRigidArea(new Dimension(0, 50)));
+            controlPanel.add(rightActions);
+
+            updateScoreText();
+        }
 
         add(controlPanel, BorderLayout.SOUTH);
+
 
     }
 
@@ -202,9 +259,18 @@ public class Game extends JPanel {
     }
 
     void updateScoreText() {
-        xScoreLabel.setText("X: " + scoreX);
+        String humanIsX = "";
+        String humanIsO = "";
+        if (vsCpuMode) {
+            if (cpuPlayer.equals("X")) {
+                humanIsO = " (Player)";
+            } else {
+                humanIsX = " (Player)";
+            }
+        }
+        xScoreLabel.setText("X: " + scoreX + humanIsX);
         tieScoreLabel.setText("Ties: " + ties);
-        oScoreLabel.setText("O: " + scoreO);
+        oScoreLabel.setText("O: " + scoreO + humanIsO);
     }
 
     void resetGame() {
@@ -220,16 +286,32 @@ public class Game extends JPanel {
             }
         }
         boardPanel.repaint();
+
+        if (vsCpuMode && currentPlayer.equals(cpuPlayer)) {
+            Timer cpuTimer = new Timer(300, event -> {
+                makeCpuMove();
+                ((Timer)event.getSource()).stop();
+            });
+            cpuTimer.setRepeats(false);
+            cpuTimer.start();
+        }
+    }
+
+    void toggleSide() {
+        if (cpuPlayer.equals("X")) {
+            cpuPlayer = "O";
+            switchSideButton.setText("Switch to X");
+        } else {
+            cpuPlayer = "X";
+            switchSideButton.setText("Switch to O");
+        }
+        resetGame();
+        updateScoreText();
     }
 
     void checkWinner() {
-        int[][] winConditions = {
-            {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // Rows
-            {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // Columns
-            {0, 4, 8}, {2, 4, 6}             // Diagonals
-        };
 
-        for (int[] condition : winConditions) {
+        for (int[] condition : getWinConditions()) {
 
             JButton firstSpace = board[condition[0] / 3][condition[0] % 3];
             JButton secondSpace = board[condition[1] / 3][condition[1] % 3];
@@ -252,7 +334,6 @@ public class Game extends JPanel {
             setTie();
             gameOver = true;
         }
-
     }
 
     void setWinningLine(int r1, int c1, int r2, int c2) {
@@ -287,7 +368,67 @@ public class Game extends JPanel {
         ties++;
         updateScoreText();
     }
-}
 
-// Todo: add a main menu that you can pick between cpu or a another player
-// Todo: create computer player
+    public static int[][] getWinConditions() {
+        int[][] winConditions = {
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // Rows
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // Columns
+            {0, 4, 8}, {2, 4, 6}             // Diagonals
+        };
+        return winConditions;
+    }
+
+    void makeCpuMove() {
+        String difficulty = (String) difficultyDropdown.getSelectedItem();
+        double chanceForBestMove = 0.6;
+
+        if (difficulty.equals("Hard")) {
+            chanceForBestMove = 0.8;
+        } else if (difficulty.equals("Unbeatable")) {
+            chanceForBestMove = 1;
+        }
+
+        boolean playBestMove = Math.random() < chanceForBestMove;
+        int bestRow = -1;
+        int bestColumn = -1;
+
+        String[][] currentBoardState = new String[3][3];
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                currentBoardState[r][c] = board[r][c].getText();
+            }
+        }
+
+        if (playBestMove) {
+            int[] optimalMove = Minimax.getBestMove(currentBoardState, cpuPlayer);
+            bestRow = optimalMove[0];
+            bestColumn = optimalMove[1];
+        } else {
+            java.util.List<int[]> emptyTiles = new java.util.ArrayList<>();
+            for (int r = 0; r < 3; r++) {
+                for (int c = 0; c < 3; c++) {
+                    if (board[r][c].getText().equals("")) {
+                        emptyTiles.add(new int[]{r, c});
+                    }
+                }
+            }
+            if (!emptyTiles.isEmpty()) {
+                int randomIndex = (int) (Math.random() * emptyTiles.size());
+                bestRow = emptyTiles.get(randomIndex)[0];
+                bestColumn = emptyTiles.get(randomIndex)[1];
+            }
+        }
+
+        if (bestRow != -1 && bestColumn != -1) {
+            board[bestRow][bestColumn].setText(cpuPlayer);
+            turns++;
+            checkWinner();
+
+        if (!gameOver) {
+                currentPlayer = cpuPlayer.equals("X") ? "O" : "X";
+                textLabel.setText(currentPlayer + "'s turn.");
+            }
+        }
+
+    }
+}
