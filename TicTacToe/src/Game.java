@@ -305,6 +305,9 @@ public class Game extends JPanel {
             cpuPlayer = "X";
             switchSideButton.setText("Switch to O");
         }
+        scoreX += scoreO;
+        scoreO = scoreX - scoreO;
+        scoreX -= scoreO;
         resetGame();
         updateScoreText();
     }
