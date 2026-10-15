@@ -36,8 +36,8 @@ public class Menu extends JPanel {
         vsCpuButton.setForeground(Theme.SUB_TEXT_COLOR);
         vsFriendButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         vsCpuButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        vsFriendButton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        vsCpuButton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        vsFriendButton.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
+        vsCpuButton.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
         JPanel selectedContainer = new JPanel() {
             @Override
@@ -68,12 +68,12 @@ public class Menu extends JPanel {
 
         Runnable updateSelection = () -> {
             if (!vsCpu) {
-                vsFriendButton.setForeground(Theme.TEXT_COLOR);
+                vsFriendButton.setForeground(Color.WHITE);
                 vsCpuButton.setForeground(Theme.SUB_TEXT_COLOR);
                 targetX = vsFriendButton.getX();
                 targetWidth = vsFriendButton.getWidth();
             } else {
-                vsCpuButton.setForeground(Theme.TEXT_COLOR);
+                vsCpuButton.setForeground(Color.WHITE);
                 vsFriendButton.setForeground(Theme.SUB_TEXT_COLOR);
                 targetX = vsCpuButton.getX();
                 targetWidth = vsCpuButton.getWidth();
